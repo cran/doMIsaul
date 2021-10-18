@@ -4,6 +4,7 @@
 \alias{MImpute}
 \alias{MImpute_surv}
 \alias{MImpute_lcens}
+\alias{MImpute_lcenssurv}
 \title{Wrapper functions for multivariate imputation with survival data or
 left-censored data}
 \usage{
@@ -29,6 +30,18 @@ MImpute_lcens(
   standards,
   mi.m,
   mice.log = 10,
+  maxit = 10,
+  return.midsObject = FALSE
+)
+
+MImpute_lcenssurv(
+  data,
+  mi.m,
+  time.status.names = c("time", "status"),
+  data.lod,
+  standards,
+  mice.log = 10,
+  var.log = NULL,
   maxit = 10,
   return.midsObject = FALSE
 )
@@ -72,6 +85,10 @@ whatever the value for \code{mice.log}).}
 unlogged data. Otherwise, number of decimal to save after taking the log of
 data (should be 10 unless for specific reasons) ; in that case the data will
 be unlogged after imputation.}
+
+\item{var.log}{names of variables to log if \code{mice.log} is numeric. If
+\code{NULL}, all variables but those in  \code{time.status.names} will be
+logged.}
 }
 \value{
 If \code{return.midsObject == FALSE} a list of size mi.m, containing
@@ -93,12 +110,12 @@ performed for variables not affected by left-censoring.
 }
 \examples{
 data(cancer, package = "survival")
-cancer.imp <- MImpute(cancer[, -c(1:3)], 3)
+cancer.imp <- MImpute(cancer[, -c(1:3)], 2)
 
 ## MImpute_surv
 data(cancer, package = "survival")
 cancer$status <- cancer$status - 1
-cancer.imp <- MImpute_surv(cancer, 3)
+cancer.imp <- MImpute_surv(cancer, 1)
 
 ## MImpute_lcens
 toy <- iris[, 1:4]
@@ -119,5 +136,35 @@ toy[sample(1:nrow(toy), 30), 3] <- NA
 toy[sample(1:nrow(toy), 30), 4] <- NA
 
 toy.imp <- MImpute_lcens(data = toy, data.lod = Censored, standards = LODs,
-                         mi.m = 3, mice.log = FALSE)
+                         mi.m = 1, mice.log = FALSE)
+## MImpute_lcenssurv
+data(cancer, package = "survival")
+cancer$status <- cancer$status - 1
+toy2 <- cancer[, -1]
+# censor on variables age and meal.cal, with LOD at quantile .1 and .2.
+LODs <- toy2[1, ]
+LODs[1, ] <-c(NA, NA, quantile(toy2[, "age"], .2, na.rm = TRUE), NA,  NA,
+              NA, NA, quantile(toy2[, "meal.cal"], .1, na.rm = TRUE), NA)
+# Censor indicator
+Censored <- data.frame(age = runif(nrow(toy2), 300,400),
+                       meal.cal = runif(nrow(toy2), 50,60))
+Censored[toy2[, "age"] < LODs[1, "age"], "age"] <- LODs[1, "age"]
+Censored[!is.na(toy2[, "meal.cal"]) &
+           toy2[, "meal.cal"] < LODs[1, "meal.cal"], "meal.cal"] <-
+ LODs[1, "meal.cal"]
+# NA for censored data
+toy2[toy2[, "age"] < LODs[1, "age"], "age"] <- NA
+toy2[!is.na(toy2[, "meal.cal"]) &
+      toy2[, "meal.cal"] < LODs[1, "meal.cal"],"meal.cal"] <- NA
+# Additional missing data
+toy2[sample(1:nrow(toy2), 30), 6] <- NA
+toy2[sample(1:nrow(toy2), 30), 3] <- NA
+toy2[sample(1:nrow(toy2), 30), 4] <- NA
+toy2$sex <- factor(toy2$sex)
+toy2$ph.ecog <- factor(toy2$ph.ecog)
+
+toy2.imp <- MImpute_lcenssurv(
+  data = toy2, mi.m = 1, data.lod = Censored, standards = LODs,
+  mice.log = FALSE)
+
 }

@@ -1,7 +1,7 @@
 Package: doMIsaul
 Title: Do Multiple Imputation-Based Semi-Supervised and Unsupervised
         Learning
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: 
     c(person(given = "Lilith",
              family = "Faucheux",
@@ -33,15 +33,15 @@ BugReports: https://github.com/LilithF/doMIsaul/issues
 Imports: aricode, arules, clusterCrit, dplyr, ggplot2, Gmedian,
         graphics, MASS, methods, mice, NbClust, ncvreg, plyr, scales,
         stats, survival, utils, withr
-Suggests: censReg, cluster, CPE, dbscan, e1071, ggpubr, Hmisc, igraph,
-        mclust, parallel, RColorBrewer, reshape2, testthat (>= 3.0.0),
-        timeROC, truncnorm
+Suggests: censReg, cluster, clustMixType, CPE, dbscan, e1071, ggpubr,
+        Hmisc, igraph, mclust, parallel, RColorBrewer, reshape2,
+        testthat (>= 3.0.0), timeROC, truncnorm
 Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-US
 RoxygenNote: 7.1.1
 NeedsCompilation: no
-Packaged: 2021-08-04 13:40:03 UTC; lfaucheux
+Packaged: 2021-10-17 11:54:56 UTC; lfaucheux
 Author: Lilith Faucheux [aut, cre],
   Sylvie Chevret [ths],
   Matthieu Resche-Rigon [ctb],
@@ -49,4 +49,4 @@ Author: Lilith Faucheux [aut, cre],
   Eric Han [ctb]
 Maintainer: Lilith Faucheux <lilith.faucheux@inserm.fr>
 Repository: CRAN
-Date/Publication: 2021-08-05 08:20:02 UTC
+Date/Publication: 2021-10-18 18:20:10 UTC
